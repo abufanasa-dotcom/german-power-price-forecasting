@@ -1,0 +1,227 @@
+{
+  "project": "german-power-price-forecasting",
+  "milestone": "Milestone 4 - Feature Engineering & Temporal Split",
+  "auction_gate_closure_cet": "12:00 CET/CEST on D-1",
+  "targets": {
+    "day_ahead_price_eur_mwh": {
+      "task": "regression",
+      "dtype": "float64",
+      "description": "Hourly German Day-Ahead wholesale electricity spot price (EPEX SPOT DE-LU)."
+    },
+    "is_negative_price": {
+      "task": "classification",
+      "dtype": "int64",
+      "description": "Binary indicator for negative spot price occurrence (day_ahead_price_eur_mwh < 0.00)."
+    }
+  },
+  "features": {
+    "price_lag_24h": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "day_ahead_price_2023_2024.parquet",
+      "transformation": "shift(24) on sorted UTC timeline",
+      "lookback": "24 hours",
+      "availability_classification": "STRICT_PRE_AUCTION",
+      "leakage_rationale": "Settled Day-Ahead price of same delivery hour yesterday (D-1). Published and known prior to gate closure for day D."
+    },
+    "price_lag_48h": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "day_ahead_price_2023_2024.parquet",
+      "transformation": "shift(48) on sorted UTC timeline",
+      "lookback": "48 hours",
+      "availability_classification": "STRICT_PRE_AUCTION",
+      "leakage_rationale": "Settled price from D-2. Fully settled and cleared prior to auction gate closure."
+    },
+    "price_lag_72h": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "day_ahead_price_2023_2024.parquet",
+      "transformation": "shift(72) on sorted UTC timeline",
+      "lookback": "72 hours",
+      "availability_classification": "STRICT_PRE_AUCTION",
+      "leakage_rationale": "Settled price from D-3. Fully historical."
+    },
+    "price_lag_96h": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "day_ahead_price_2023_2024.parquet",
+      "transformation": "shift(96) on sorted UTC timeline",
+      "lookback": "96 hours",
+      "availability_classification": "STRICT_PRE_AUCTION",
+      "leakage_rationale": "Settled price from D-4. Fully historical."
+    },
+    "price_lag_120h": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "day_ahead_price_2023_2024.parquet",
+      "transformation": "shift(120) on sorted UTC timeline",
+      "lookback": "120 hours",
+      "availability_classification": "STRICT_PRE_AUCTION",
+      "leakage_rationale": "Settled price from D-5. Fully historical."
+    },
+    "price_lag_144h": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "day_ahead_price_2023_2024.parquet",
+      "transformation": "shift(144) on sorted UTC timeline",
+      "lookback": "144 hours",
+      "availability_classification": "STRICT_PRE_AUCTION",
+      "leakage_rationale": "Settled price from D-6. Fully historical."
+    },
+    "price_lag_168h": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "day_ahead_price_2023_2024.parquet",
+      "transformation": "shift(168) on sorted UTC timeline",
+      "lookback": "168 hours",
+      "availability_classification": "STRICT_PRE_AUCTION",
+      "leakage_rationale": "Settled price of same delivery hour same day last week (D-7). Captures weekly cyclicality."
+    },
+    "price_daily_lag_mean_7d": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "Derived from price_lag_24h..168h",
+      "transformation": "Row-wise mean across the 7 historical daily lag columns",
+      "lookback": "24h to 168h",
+      "availability_classification": "STRICT_PRE_AUCTION",
+      "leakage_rationale": "Computed strictly from historical daily lags. Never includes current delivery day target."
+    },
+    "price_daily_lag_std_7d": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "Derived from price_lag_24h..168h",
+      "transformation": "Row-wise sample standard deviation across the 7 historical daily lag columns",
+      "lookback": "24h to 168h",
+      "availability_classification": "STRICT_PRE_AUCTION",
+      "leakage_rationale": "Captures recent price volatility across historical daily lags without target contamination."
+    },
+    "load_actual_lag_48h": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "load_actual_2023_2024.parquet",
+      "transformation": "shift(48) on sorted UTC timeline",
+      "lookback": "48 hours",
+      "availability_classification": "STRICT_PRE_AUCTION",
+      "leakage_rationale": "Actual total electrical load from D-2. Minimum 48h lag respects SMARD retrospective publication latency."
+    },
+    "load_actual_lag_168h": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "load_actual_2023_2024.parquet",
+      "transformation": "shift(168) on sorted UTC timeline",
+      "lookback": "168 hours",
+      "availability_classification": "STRICT_PRE_AUCTION",
+      "leakage_rationale": "Actual total electrical load from same hour last week (D-7). Fully historical and settled."
+    },
+    "hour_of_day": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "timestamp_local",
+      "transformation": "Local market hour integer (0-23)",
+      "lookback": "0 hours (Deterministic)",
+      "availability_classification": "DETERMINISTIC_CALENDAR",
+      "leakage_rationale": "Deterministic delivery hour known infinitely in advance."
+    },
+    "hour_sin": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "hour_of_day",
+      "transformation": "sin(2*pi*hour / 24)",
+      "lookback": "0 hours (Deterministic)",
+      "availability_classification": "DETERMINISTIC_CALENDAR",
+      "leakage_rationale": "Trigonometric encoding of diurnal delivery cycle."
+    },
+    "hour_cos": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "hour_of_day",
+      "transformation": "cos(2*pi*hour / 24)",
+      "lookback": "0 hours (Deterministic)",
+      "availability_classification": "DETERMINISTIC_CALENDAR",
+      "leakage_rationale": "Trigonometric encoding of diurnal delivery cycle."
+    },
+    "day_of_week": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "timestamp_local",
+      "transformation": "Local market day of week (0=Mon, 6=Sun)",
+      "lookback": "0 hours (Deterministic)",
+      "availability_classification": "DETERMINISTIC_CALENDAR",
+      "leakage_rationale": "Deterministic calendar property known in advance."
+    },
+    "is_weekend": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "day_of_week",
+      "transformation": "Binary indicator (1 if Sat/Sun, else 0)",
+      "lookback": "0 hours (Deterministic)",
+      "availability_classification": "DETERMINISTIC_CALENDAR",
+      "leakage_rationale": "Deterministic weekend indicator."
+    },
+    "month": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "timestamp_local",
+      "transformation": "Local calendar month integer (1-12)",
+      "lookback": "0 hours (Deterministic)",
+      "availability_classification": "DETERMINISTIC_CALENDAR",
+      "leakage_rationale": "Deterministic seasonal calendar indicator."
+    },
+    "month_sin": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "month",
+      "transformation": "sin(2*pi*(month-1) / 12)",
+      "lookback": "0 hours (Deterministic)",
+      "availability_classification": "DETERMINISTIC_CALENDAR",
+      "leakage_rationale": "Trigonometric encoding of annual seasonality."
+    },
+    "month_cos": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "month",
+      "transformation": "cos(2*pi*(month-1) / 12)",
+      "lookback": "0 hours (Deterministic)",
+      "availability_classification": "DETERMINISTIC_CALENDAR",
+      "leakage_rationale": "Trigonometric encoding of annual seasonality."
+    },
+    "is_dst": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "timestamp_local",
+      "transformation": "Binary indicator for Daylight Saving Time (1 for CEST, 0 for CET)",
+      "lookback": "0 hours (Deterministic)",
+      "availability_classification": "DETERMINISTIC_CALENDAR",
+      "leakage_rationale": "Deterministic legal clock regime in Europe/Berlin."
+    },
+    "is_public_holiday_de": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "timestamp_local",
+      "transformation": "Binary indicator for statutory German nationwide public holidays",
+      "lookback": "0 hours (Deterministic)",
+      "availability_classification": "DETERMINISTIC_CALENDAR",
+      "leakage_rationale": "Fixed legal calendar dates known years in advance."
+    },
+    "is_bridge_day": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "timestamp_local",
+      "transformation": "Binary indicator for Friday following a Thursday holiday or Monday preceding a Tuesday holiday",
+      "lookback": "0 hours (Deterministic)",
+      "availability_classification": "DETERMINISTIC_CALENDAR",
+      "leakage_rationale": "Deterministic calendar rule. Strongly correlates with German industrial shutdown leave."
+    },
+    "solar_elevation_proxy": {
+      "group": "Core Strict Pre-Auction",
+      "source_dataset": "timestamp_utc & coordinates (51.1657N, 10.4515E)",
+      "transformation": "max(0, sin(astronomical_solar_elevation))",
+      "lookback": "0 hours (Deterministic)",
+      "availability_classification": "DETERMINISTIC_PHYSICAL_PROXY",
+      "leakage_rationale": "Exact astronomical solar position calculated for geographic center of Germany. 100% deterministic, zero weather data, zero lookahead."
+    },
+    "load_forecast_mw": {
+      "group": "Official Forecast Extension",
+      "source_dataset": "load_forecast_2023_2024.parquet",
+      "transformation": "Raw SMARD Filter 411 total load forecast",
+      "lookback": "Published by 12:00 CET on D-1 per EU Regulation 543/2013",
+      "availability_classification": "ARCHIVE_VINTAGE_LIMITATION",
+      "leakage_rationale": "PRE-AUCTION BY PUBLICATION RULE / ARCHIVE-VINTAGE NOT GUARANTEED. Retrospective SMARD archive may reflect updated load forecast vintages rather than strictly preserved point-in-time pre-auction bids."
+    },
+    "load_forecast_diff_24h": {
+      "group": "Official Forecast Extension",
+      "source_dataset": "load_forecast_2023_2024.parquet",
+      "transformation": "load_forecast_mw - load_forecast_mw.shift(24)",
+      "lookback": "24 hours",
+      "availability_classification": "ARCHIVE_VINTAGE_LIMITATION",
+      "leakage_rationale": "PRE-AUCTION BY PUBLICATION RULE / ARCHIVE-VINTAGE NOT GUARANTEED. Day-over-day shift in forecasted system demand."
+    },
+    "load_forecast_daily_peak_ratio": {
+      "group": "Official Forecast Extension",
+      "source_dataset": "load_forecast_2023_2024.parquet",
+      "transformation": "load_forecast_mw / daily_max_load_forecast",
+      "lookback": "Published by 12:00 CET on D-1 for all 24h of day D",
+      "availability_classification": "ARCHIVE_VINTAGE_LIMITATION",
+      "leakage_rationale": "PRE-AUCTION BY PUBLICATION RULE / ARCHIVE-VINTAGE NOT GUARANTEED. Normalizes intraday demand shape relative to expected peak."
+    }
+  }
+}
