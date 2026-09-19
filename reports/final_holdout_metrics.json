@@ -1,0 +1,239 @@
+{
+  "audit_metadata": {
+    "freeze_commit": "23a34db",
+    "model_selection_source": "validation only",
+    "final_fitting_rows": 12959,
+    "holdout_rows": 4417,
+    "primary_regression_feature_family": "Core Strict",
+    "primary_classification_feature_family": "Core Strict",
+    "frozen_classification_threshold": 0.45,
+    "post_holdout_tuning_performed": false,
+    "holdout_used_for_model_selection": false,
+    "forecast_extension_status": "supplementary_only"
+  },
+  "development_target_statistics": {
+    "train_rows": 8592,
+    "val_rows": 4367,
+    "dev_rows": 12959,
+    "train_negative_hours": 287,
+    "train_negative_prevalence_pct": 3.3403,
+    "val_negative_hours": 224,
+    "val_negative_prevalence_pct": 5.1294,
+    "dev_negative_hours": 511,
+    "dev_negative_prevalence_pct": 3.9432
+  },
+  "holdout_target_statistics": {
+    "total_hours": 4417,
+    "negative_price_hours": 233,
+    "negative_price_prevalence_pct": 5.2751,
+    "settled_price_min_eur_mwh": -73.96,
+    "settled_price_max_eur_mwh": 936.28,
+    "settled_price_mean_eur_mwh": 89.32176590446004,
+    "settled_price_std_eur_mwh": 62.787800866536664
+  },
+  "benchmarks": {
+    "24h_persistence_mae": 32.7342,
+    "168h_persistence_mae": 39.0469,
+    "7d_lag_mean_mae": 33.7042
+  },
+  "primary_regression": {
+    "model_name": "LightGBM Regressor (Candidate D)",
+    "feature_family": "Core Strict",
+    "hyperparameters": {
+      "objective": "regression",
+      "n_estimators": 400,
+      "learning_rate": 0.03,
+      "num_leaves": 15,
+      "max_depth": 5,
+      "min_child_samples": 50,
+      "subsample": 0.8,
+      "subsample_freq": 1,
+      "colsample_bytree": 0.8,
+      "reg_lambda": 0.0,
+      "random_state": 42,
+      "n_jobs": -1,
+      "verbose": -1
+    },
+    "holdout_metrics": {
+      "mae": 26.8719,
+      "rmse": 45.6747,
+      "median_ae": 18.9403,
+      "bias": -2.3099,
+      "improvement_vs_24h_pct": 17.91,
+      "improvement_vs_168h_pct": 31.18,
+      "improvement_vs_7d_mean_pct": 20.27
+    },
+    "validation_comparison": {
+      "validation_mae": 18.97,
+      "holdout_mae": 26.8719,
+      "difference_abs_eur_mwh": 7.9019,
+      "difference_rel_pct": 41.65,
+      "generalization_classification": "substantial degradation"
+    }
+  },
+  "supplementary_regression": {
+    "model_name": "LightGBM Regressor (Candidate D)",
+    "feature_family": "Forecast Extension",
+    "qualification": "ARCHIVE_VINTAGE_LIMITATION",
+    "status": "SUPPLEMENTARY SENSITIVITY ANALYSIS",
+    "hyperparameters": {
+      "objective": "regression",
+      "n_estimators": 400,
+      "learning_rate": 0.03,
+      "num_leaves": 15,
+      "max_depth": 5,
+      "min_child_samples": 50,
+      "subsample": 0.8,
+      "subsample_freq": 1,
+      "colsample_bytree": 0.8,
+      "reg_lambda": 0.0,
+      "random_state": 42,
+      "n_jobs": -1,
+      "verbose": -1
+    },
+    "holdout_metrics": {
+      "mae": 26.5494,
+      "rmse": 45.2708,
+      "median_ae": 18.5089,
+      "bias": -1.6959,
+      "improvement_vs_24h_pct": 18.89,
+      "improvement_vs_168h_pct": 32.01,
+      "improvement_vs_7d_mean_pct": 21.23
+    },
+    "validation_comparison": {
+      "validation_mae": 18.98,
+      "holdout_mae": 26.5494,
+      "difference_abs_eur_mwh": 7.5694,
+      "difference_rel_pct": 39.88,
+      "generalization_classification": "substantial degradation"
+    }
+  },
+  "primary_classification": {
+    "model_name": "Logistic Regression (StandardScaler, class_weight='balanced')",
+    "feature_family": "Core Strict",
+    "operating_threshold": 0.45,
+    "holdout_metrics": {
+      "pr_auc": 0.4538,
+      "roc_auc": 0.9019,
+      "balanced_accuracy": 0.8023,
+      "recall": 0.8412,
+      "precision": 0.1653,
+      "f1": 0.2763,
+      "confusion_matrix": {
+        "tn": 3194,
+        "fp": 990,
+        "fn": 37,
+        "tp": 196
+      }
+    },
+    "validation_comparison": {
+      "pr_auc": {
+        "validation": 0.5914,
+        "holdout": 0.45378397719448815,
+        "diff_abs": -0.13761602280551188,
+        "diff_pct": -23.26953378517279,
+        "generalization_classification": "moderate degradation"
+      },
+      "roc_auc": {
+        "validation": 0.936,
+        "holdout": 0.9018999417359407,
+        "diff_abs": -0.034100058264059374,
+        "diff_pct": -3.6431686179550606,
+        "generalization_classification": "similar performance"
+      },
+      "balanced_accuracy": {
+        "validation": 0.8505,
+        "holdout": 0.8022930189809534,
+        "diff_abs": -0.048206981019046635,
+        "diff_pct": -5.668075369670386,
+        "generalization_classification": "similar performance"
+      },
+      "recall": {
+        "validation": 0.7857,
+        "holdout": 0.8412017167381974,
+        "diff_abs": 0.05550171673819748,
+        "diff_pct": 7.063983293648655,
+        "generalization_classification": "improved holdout performance"
+      },
+      "precision": {
+        "validation": 0.334,
+        "holdout": 0.16526138279932545,
+        "diff_abs": -0.16873861720067457,
+        "diff_pct": -50.52054407205825,
+        "generalization_classification": "substantial degradation"
+      },
+      "f1": {
+        "validation": 0.4687,
+        "holdout": 0.2762508809020437,
+        "diff_abs": -0.1924491190979563,
+        "diff_pct": -41.060191828025665,
+        "generalization_classification": "substantial degradation"
+      }
+    }
+  },
+  "supplementary_classification": {
+    "model_name": "Logistic Regression (StandardScaler, class_weight='balanced')",
+    "feature_family": "Forecast Extension",
+    "qualification": "PRE-AUCTION BY PUBLICATION RULE / ARCHIVE-VINTAGE NOT GUARANTEED",
+    "status": "SUPPLEMENTARY SENSITIVITY ANALYSIS",
+    "operating_threshold": 0.55,
+    "holdout_metrics": {
+      "pr_auc": 0.4941,
+      "roc_auc": 0.9118,
+      "balanced_accuracy": 0.826,
+      "recall": 0.8283,
+      "precision": 0.2073,
+      "f1": 0.3316,
+      "confusion_matrix": {
+        "tn": 3446,
+        "fp": 738,
+        "fn": 40,
+        "tp": 193
+      }
+    },
+    "validation_comparison": {
+      "pr_auc": {
+        "validation": 0.6126,
+        "holdout": 0.494115377305449,
+        "diff_abs": -0.11848462269455101,
+        "diff_pct": -19.341270436590108,
+        "generalization_classification": "moderate degradation"
+      },
+      "roc_auc": {
+        "validation": 0.9425,
+        "holdout": 0.9118386824116397,
+        "diff_abs": -0.030661317588360326,
+        "diff_pct": -3.253190195051493,
+        "generalization_classification": "similar performance"
+      },
+      "balanced_accuracy": {
+        "validation": 0.8513,
+        "holdout": 0.8259699734939561,
+        "diff_abs": -0.02533002650604388,
+        "diff_pct": -2.9754524264118265,
+        "generalization_classification": "similar performance"
+      },
+      "recall": {
+        "validation": 0.7723,
+        "holdout": 0.8283261802575107,
+        "diff_abs": 0.056026180257510716,
+        "diff_pct": 7.254458145475944,
+        "generalization_classification": "improved holdout performance"
+      },
+      "precision": {
+        "validation": 0.3745,
+        "holdout": 0.20730397422126745,
+        "diff_abs": -0.16719602577873255,
+        "diff_pct": -44.64513371928773,
+        "generalization_classification": "substantial degradation"
+      },
+      "f1": {
+        "validation": 0.5044,
+        "holdout": 0.3316151202749141,
+        "diff_abs": -0.17278487972508588,
+        "diff_pct": -34.25552730473551,
+        "generalization_classification": "substantial degradation"
+      }
+    }
+  }
+}
