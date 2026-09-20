@@ -13,7 +13,7 @@ This project builds a leakage-safe, end-to-end machine learning pipeline to fore
 | **Negative-Price Recall** | **84.12%** | Captured 196 of 233 negative-price hours (threshold 0.45) |
 | **Negative-Price PR-AUC** | **0.4538** | Primary classifier (Logistic Regression) |
 | **Final Holdout** | **4,417 unseen hourly observations** | H2 2024 (Jul 1 – Dec 31, 2024) |
-| **Test Suite** | **62 tests passed** | Complete automated test suite passing (0 failed) |
+| **Test Suite** | **71 tests passed** | Complete test suite (62 pipeline + 9 dashboard, 0 failed) |
 
 ---
 
@@ -203,6 +203,7 @@ This repository implements strict methodological safeguards and data science gov
 ## 10. Project Structure
 
 ```text
+├── app.py                   # Streamlit portfolio presentation dashboard
 ├── data/
 │   ├── raw/                 # Downloaded SMARD CSV files (git-ignored)
 │   └── processed/           # Processed parquet tables & feature matrices
@@ -216,6 +217,7 @@ This repository implements strict methodological safeguards and data science gov
 │   └── final_holdout_report.md
 ├── src/
 │   ├── __init__.py
+│   ├── dashboard.py         # Dashboard loading & formatting utilities
 │   ├── ingestion.py         # SMARD API data retrieval and schema normalization
 │   ├── validation.py        # Data quality, timestamp continuity, and DST verification
 │   ├── features.py          # Leakage-safe feature engineering & temporal splitting
@@ -240,7 +242,8 @@ This repository implements strict methodological safeguards and data science gov
 │   ├── test_ml_models.py
 │   ├── test_regression_tuning.py
 │   ├── test_classification_refinement.py
-│   └── test_final_holdout.py
+│   ├── test_final_holdout.py
+│   └── test_dashboard.py
 ├── requirements.txt
 └── README.md
 ```
@@ -261,7 +264,7 @@ pip install -r requirements.txt
 
 ### Run Test Suite
 ```powershell
-# Execute complete automated test suite (62 tests)
+# Execute complete automated test suite (71 tests: 62 pipeline + 9 dashboard)
 python -m pytest
 ```
 
